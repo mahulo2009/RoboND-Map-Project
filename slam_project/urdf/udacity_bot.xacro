@@ -127,11 +127,11 @@
 
 	<joint name="camera_joint" type="fixed" >
 		<parent link="chassis"/>
-		<child link="camera"/>
+		<child link="camera_link"/>
 		<origin xyz="0.2 0 0" rpy="0 0 0"/>
 	</joint>
 
-	<link name='camera'>
+	<link name='camera_link'>
 
 		<inertial>
 			<mass value="0.1"/>
@@ -158,6 +158,16 @@
 		</visual>
 
 	</link>
+
+	<link name='camera_rgbd_frame'>
+
+	</link>
+
+	<joint name="camera_rgbd_joint" type="fixed" >
+		<parent link="camera_link"/>
+		<child link="camera_rgbd_frame"/>
+		<origin xyz="0 0 0" rpy="0 0 0"/>
+	</joint>
 
 	<joint name="hokuyo_joint" type="fixed" >
 		<parent link="chassis"/>
