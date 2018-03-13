@@ -135,7 +135,7 @@
 
 		<inertial>
 			<mass value="0.1"/>
-			<origin xyz="0.0 0 0" rpy="0 0 0"/>
+			<origin xyz="0.0 0 0" rpy="0.0 0 0"/>
 			<inertia
 			  ixx="1e-6" ixy="0" ixz="0"
 			  iyy="1e-6" iyz="0"
@@ -159,14 +159,12 @@
 
 	</link>
 
-	<link name='camera_rgbd_frame'>
-
-	</link>
+	<link name='camera_rgbd_frame'></link>
 
 	<joint name="camera_rgbd_joint" type="fixed" >
 		<parent link="camera_link"/>
 		<child link="camera_rgbd_frame"/>
-		<origin xyz="0 0 0" rpy="0 0 0"/>
+		<origin xyz="0 0 0" rpy="-1.57 0 -1.57"/>
 	</joint>
 
 	<joint name="hokuyo_joint" type="fixed" >
