@@ -14,7 +14,7 @@ Panels:
         - /Local Map1/Costmap1
         - /Local Map1/Planner1
       Splitter Ratio: 0.5
-    Tree Height: 598
+    Tree Height: 366
   - Class: rviz/Selection
     Name: Selection
   - Class: rviz/Tool Properties
@@ -381,5 +381,5 @@ Window Geometry:
   Views:
     collapsed: true
   Width: 1092
-  X: 1986
-  Y: 210
+  X: 48
+  Y: 39
