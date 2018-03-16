@@ -18,9 +18,7 @@
 \IEEEtitleabstractindextext{%
 	
 \begin{abstract}
-
-In this project a 2D occupancy grid and a 3D octomap was created from a simulated environment provided by the Udacity team. In addition, a simulation environment was created from scratch, and the two previous maps were generated for this new environment. A robot provided with a Lidar, a RGB-D camera and odometry information from a differential drive was used, in the simulated environment. The library RTAB-Map was selected to solve the slam problem because: it offers a good performance and memory management, a good portfolio of development tools, and a good quality of the documentation. One of these tools, the rtabmap database viewer, was used to find out the closures and to identify the occupancy grid.
-
+Simultaneous localization and mapping, SLAM, is the problem of building a map of an unknown environment while simultaneously localize a robot relative to this map. In this project a 2D and 3D occupancy grid map was created from both a simulated environment provided by the Udacity team and an environment was created from scratch. A robot with two differential drives and equipped with a Lidar, a RGB-D camera was used in the simulated environment.The library RTAB-Map was selected to solve the slam problem because: it offers a good performance and memory management, a good portfolio of development tools, and a good quality of the documentation. 
 \end{abstract}
 
 
@@ -36,170 +34,11 @@ slam, udacity, rtab-map.
 \label{sec:introduction}
 \IEEEPARstart
 {T}{here} are some applications where a robot is provided with a map of its environment and it is able to estimates its pose based on this map, the odometry data and some sensor data like a Lidar or RGB-D camera. Furthermore, in some case the map is unknown, either because the area is unexplored or because the surrounding change often and the map may not be updated. In that case the robot must construct a map, the robot's pose is known and the robot is equipped with sensor data to measure its environment. Finally, in the most general case neither the Robot's pose and map is available, this is where slam cames in. In slam, the Robot will use the odometry and the sensor data to build a map of its environment while simultaneously localize itself relative to this map. The slam problem is quite challenging, with noise in the robot pose and measurement, the robot's pose will be uncertain and the construction of the map will be uncertaion as well, they are interrelated. This project will use an implementation of slam called real time appearance based mapping or RTABmap. This implementation is based on Graph Slam. GraphSlam is a slam algorithm that solves the full slam problem, this means that the algoritm recovers the entire path and map, instead of just the most recent pose and map.
-
-
 \section{Background / Formulation}
-		
-\section{Data Acquisition}
-
-The data set was collected using the camera of a mobile phone. The coins were put on a white paper and a video recording was started. Every few seconds the recording was paused to turn the coin randomly. Then, a tool to extract individual images from the video, ffmpeg, was used. The image were stored in jpeg format with a size of 1920x1080 pixels. A total of 2900 images, approximately, were collected.
-
-In order to classify the coin a two-step strategy have been used. In the first step a classic feature extraction algorithm has been used. Due to the coins to be classified share a circular shape, the Hough Transform was used to find the coins in the image, classified them depending on the position in the image. The second step will use the inference, after training the network, to classify new images not seen before. The idea is to extract the region of the image corresponding to the coin and to inject this image as the input of the neural network.
-
-It must be noticed that this is not a limitation for the real system, when trying to inference new samples, since the Hough Transform will be just used in this context to extract the portion of the image relative to the coin, and the neural network will inference the exact class for this new sample. 
-
-In addition, the principal advantage for this strategy is that the background of the image is not a problem during classification, because it is extracted, making this network quite robust to different environments.
-
-
-\begin{figure}[h]
-\centering
-\includegraphics[scale=0.08]{inference-raw}
-\caption{Example of raw image coming from the mobile camera.}
-\label{fig:figure1}
-\end{figure}
-
-A python script was created to take every image and, using the Hough Transform, to extract the coins from the images. The individual images were safe in directories with the name of the classes, in this case : coin10, coin20 and con100.
-
-These images where down-sampled. The final image size, the ones used to train the network, was 256x256 pixels. The single images for every class was safe with the following directory structure:
-
-\dirtree{%
-.1 data.
-.2 coin10.
-.3 coin-10-image-1.jpg.
-.3 coin-10-image-2.jpg.
-.2 coin20.
-.3 coin-20-image-1.jpg.
-.3 coin-20-image-2.jpg.
-.2 coin100.
-.3 coin-100-image-1.jpg.
-.3 coin-100-image-2.jpg.
-}
-
-\begin{figure}[h]
-\centering
-\begin{subfigure}[b]{0.15\textwidth}
-\includegraphics[scale=0.25]{output_0010_0}
-\caption{10 cents}
-\end{subfigure}
-\begin{subfigure}[b]{0.15\textwidth}
-\includegraphics[scale=0.25]{output_0005_1}
-\caption{20 cents}
-\end{subfigure}
-\begin{subfigure}[b]{0.15\textwidth}
-\includegraphics[scale=0.25]{output_0001_2}
-\caption{1 euro}
-\end{subfigure}
-\label{fig:figure2}
-\caption{Example images coin extracted using Hough Transform.}
-\end{figure}
-
-
-\section{Neural Network Trainning}
-
-Digits tools was used to train the network. The process of training the network in digits takes two steps. The following section show the configuration for both networks: the train the dataset provided by udaciy and the original idea.
-
-\subsection{Udacity}
-\subsubsection{Create the Model}
-
-In the first step the model from the data set, classification type, was created. The following parameters were selected:
-
-\begin{itemize}
-\item Image type[Color]: color is a  3-channel RGB image.
-\item Image size(Width x Height) [256,256]: the image input will be resized to this value. 
-\item Trainning Image: the folder with the structure as provided by udacity.
-\item \%for validation[25\%]: the percent of image to set apart for the validation process.
-\item \%for testing[5\%]: the percent of image to set apart for the test process.
-\item DatasetName[udacity\-dataset]: the name of the dataset for future references.
-\end{itemize}
-
-\subsubsection{Train the Network}
-
-The network was trained with the model and network architecture previously defined using the digits platform.
-
-\begin{figure}[h]
-\centering
-\includegraphics[scale=0.3]{trainning-chart}
-\caption{Trainnig chart Udacity.}
-\label{fig:figure3}
-\end{figure}
-
-
-\subsection{Original Idea}
-\subsubsection{Create the Model}
-
-In the first step the model from the data set, classification type, was created. The following parameters were selected:
-
-\begin{itemize}
-\item Image type[Color]: color is a  3-channel RGB image.
-\item Image size(Width x Height) [256,256]: the image input will be resize to this value. Since the original image was already of this size, resizing will not take place.
-\item Trainning Image: the folder with the structure describe in the previous section. 
-\item \%for validation[25\%]: the percent of image to set apart for the validation process.
-\item \%for testing[10\%]: the percent of image to set apart for the test process.
-\item DatasetName[coin\-dataset]: the name of the dataset for future references.
-\end{itemize}
-
-\subsubsection{Train the Network}
-
-The network was trained with the model and network architecture previously defined using the digits platform.
-
-\begin{figure}[h]
-\centering
-\includegraphics[scale=0.25]{trainning-chart-udacity}
-\caption{Trainnig chart original idea.}
-\label{fig:figure3}
-\end{figure}
-
+\section{Scene and robot configuration}
 \section{Results}
-
-\subsection{Udacity}
-
-After training the network the result was evaluated, the result is on requirements.
-
-\begin{figure}[h]
-\centering
-\includegraphics[scale=0.2]{udacity-evaluate}
-\caption{Evaluation of the model udacity.}
-\label{fig:figure4}
-\end{figure}
-
-\subsection{Original Idea}
-
-After training the network a subset of the image reserved to test the result with the following output:
-
-\begin{figure}[h]
-\centering
-\includegraphics[scale=0.2]{confusion-matrix}
-\caption{Confusion Matrix.}
-\label{fig:figure5}
-\end{figure}
-
-
-\begin{figure}[h]
-\centering
-\includegraphics[scale=0.2]{classification-all}
-\caption{Classification result of the network for testing images.}
-\label{fig:figure6}
-\end{figure}
-
-The results of the classification were really good. 
-
 \section{Discussion}
-
-It has been notice during the development of this project the importance of the data collection process. In order to have a good accuracy is quite important to have a big number of samples of every class. The process of acquiring these images can be a complex and time-consuming task. The background where the object were collected is also part of the acquisition problem. In this project a mix solution, using traditional image processing techniques, Hough Transform, was used to overcame this problem. The final accuracy obtained was quite good. 
-
-There are some parameters that must be taken in account depending on the final deployed hardware and the desire performance:accuracy, inference time, power consumption, memory use.\cite{analysisdnn}
-
-There are relation between these parameters. For example,there are a hyperbolic relationship between the accuracy and inference time, in order to have a small increase in the accuracy the inference time will increase following a hyperbolic curve. 
-
-For that reason the network architecture must be selected taking in consideration the specific requirements for the concrete application. Furthermore, due to the possible limitations of the hardware where the solution will be deployed, and taking in consideration the frame per seconds to be inference and the accuracy desire, the correct network architecture must be selected. 
-
-In this project GoogleNet was selected due that the solution for both Udacity model and own model was on requirements. Furthermore, due to the possible limitations 
-
-	
 \section{Conclusion / Future work}
-
-The accuracy of the classification process achieved was really good. Due to time constraints the classes consists only in three coin and the same side. The final number of the classes is quite bigger than that. There are eight euros coins with two side each. One of the size is common for all the European countries but the other side is country specific. This makes the process of gathering the samples more difficult and time consuming. Once the network is trained with all the coin types and size a mobile application can be used to inference the coins in the day basis. The fact that the background is extracted will make this network quite robots again different environments: coins spread out over a pub's bar or over a counter in a book store.
-
 
 \begin{thebibliography}{9}
 \bibliographystyle{ieeetr}
@@ -216,7 +55,6 @@ Adit Deshpande
 Alfredo Canziani, Eugenio Culurciello,Adam Paszke  
 \textit{An analysis of deep neural network models for practical applications}. 
 \end{thebibliography}
-		
 \end{document}
 	
 	
