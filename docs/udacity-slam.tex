@@ -5,6 +5,7 @@
 \usepackage{listings}
 \usepackage{subcaption} 
 \usepackage{dirtree}
+\usepackage{mathtools}
 \hyphenation{op-tical net-works semi-conduc-tor}
 \graphicspath{ {../images/} }
 
@@ -18,7 +19,7 @@
 \IEEEtitleabstractindextext{%
 	
 \begin{abstract}
-Simultaneous localization and mapping, SLAM, is the problem of building a map of an unknown environment while simultaneously localize a robot relative to this map. In this project a 2D and 3D occupancy grid map was created from both a simulated environment provided by the Udacity team and an environment was created from scratch. A robot with two differential drives and equipped with a Lidar, a RGB-D camera was used in the simulated environment.The library RTAB-Map was selected to solve the slam problem because: it offers a good performance and memory management, a good portfolio of development tools, and a good quality of the documentation. 
+Simultaneous localization and mapping, SLAM, is the problem of building a map of an unknown environment while simultaneously localize a robot relative to this map. In this project a 2D and 3D occupancy grid map was created from both a simulated environment provided by the Udacity team and an environment that was created from scratch. A robot with two differential drives and equipped with a Lidar and a RGB-D camera was used in the simulated environment.The library RTAB-Map was selected to solve the slam problem because: it offers a good performance and memory management, a good portfolio of development tools, and a good quality of the documentation. 
 \end{abstract}
 
 
@@ -34,7 +35,20 @@ slam, udacity, rtab-map.
 \label{sec:introduction}
 \IEEEPARstart
 {T}{here} are some applications where a robot is provided with a map of its environment and it is able to estimates its pose based on this map, the odometry data and some sensor data like a Lidar or RGB-D camera. Furthermore, in some case the map is unknown, either because the area is unexplored or because the surrounding change often and the map may not be updated. In that case the robot must construct a map, the robot's pose is known and the robot is equipped with sensor data to measure its environment. Finally, in the most general case neither the Robot's pose and map is available, this is where slam cames in. In slam, the Robot will use the odometry and the sensor data to build a map of its environment while simultaneously localize itself relative to this map. The slam problem is quite challenging, with noise in the robot pose and measurement, the robot's pose will be uncertain and the construction of the map will be uncertaion as well, they are interrelated. This project will use an implementation of slam called real time appearance based mapping or RTABmap. This implementation is based on Graph Slam. GraphSlam is a slam algorithm that solves the full slam problem, this means that the algoritm recovers the entire path and map, instead of just the most recent pose and map.
+
+
 \section{Background / Formulation}
+The most fundamental problem in robotics. It is considered as a prerequisise for truly autonomous robot.
+\subsection{Grid-based FastSLAM}
+FastSLAM algorithm uses the particle filter approach along with the low dimensional extended Kalman filter to incrementally estimate the posterior distribution over robot pose along with the positions of some landmarks. FastSLAM decomposes the SLAM problem into a robot localization problem, and a collection of landmark estimation problems that are conditioned on the robot pose estimate. In order to solve the SLAM problem FastSlam uses a modified particle filter for estimating the posterior over robot path, for every particle in the filter there are K Kalman filters that estimate the K landmark locations conditioned on the path estimate. An implementation of this idea requires {O(MK)} time, where M is the number of particles and K the number of landmarks, by using a tree-based data structure the running time can be reduced to {O(MlogK)}. Finally, there are different versions of the algorithm. The one used during the course is called Grid-based FastSLAM which adapts FastSLAM to grid maps with the main advantage of no need for predefining landmark, that means it will work in arbitrary environments.
+
+\begin{align}
+p(x_{0:t},m|z_{1:t},u_{1:t})=p(x_{0:t}|z_{1:t},y_{1:t})p(m|x_{1:t},z_{1:t})
+\end{align}
+
+\subsection{GraphSLAM}
+GraphSLAM uses contraints to represent relationships between robot poses and the environment, and then tries to resolve all of these constraints to create the most likely map given the data.
+
 \section{Scene and robot configuration}
 \section{Results}
 \section{Discussion}
@@ -58,3 +72,4 @@ Alfredo Canziani, Eugenio Culurciello,Adam Paszke
 \end{document}
 	
 	
+
