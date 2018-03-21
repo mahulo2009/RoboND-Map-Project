@@ -91,21 +91,47 @@ The model provided by Udacity is a 2W robot with two caster, one on the front an
 \item Lidar: a hokuyo lidar in the front.
 \item Camera: a RGB-D camera in the head of the platform
 \end{itemize}
-
-
-
-
 \subsection{Packing Structure}
-
-
-
-
-
-
-
-
-
+A module named slam\_project was created with the follwing structure:
+\dirtree{%
+.1 slam\_project.
+.2 CMakeLists.txt.
+.2 config.
+.2 launch.
+.2 meshes.
+.2 package.xml.
+.2 scripts.
+.2 urdf.
+.2 worlds.
+}
+Three different launchs files were created:
+roslaunch slam\_project world.launch
+roslaunch slam\_project teleop.launch
+roslaunch slam\_project mapping.launch
+roslaunch slam\_project rviz.launch
 \section{Results}
+
+
+\begin{figure}[h]
+\centering
+\begin{subfigure}[b]{0.2\textwidth}
+\includegraphics[scale=0.3]{own-occupancy-grid-map}
+\caption{Occupancy Grid Map}
+\end{subfigure}
+\begin{subfigure}[b]{0.2\textwidth}
+\includegraphics[scale=0.3]{own-3d-map}
+\caption{3D octomap}
+\end{subfigure}
+\caption{Own world}
+\end{figure}
+
+
+
+
+
+
+
+
 \section{Discussion}
 \section{Conclusion / Future work}
 
