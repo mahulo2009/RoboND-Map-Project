@@ -34,7 +34,7 @@ slam, udacity, rtab-map.
 \section{Introduction}
 \label{sec:introduction}
 \IEEEPARstart
-{T}{here} are some applications where a Robot is provided with a map of its environment and it is able to estimates its pose based on this map, the odometry data and some sensor data like a Lidar or RGB-D camera. Furthermore, in some case the map is unknown, either because the area is unexplored or because the surrounding change often and the map may not be updated. In that case the Robot must construct a map, the Robot's pose is known and the Robot is equipped with sensor data to measure its environment. There are several difficulties when building a map: high dimensionality of the space, size, noise, perceptual ambiguity , Robot moving in cycles. The  high dimensionality problem can be overcome by using an occupancy grid map where the space is represented by a fine-grained grid over the continuous space in the environment. The noise or incertains is manages by using probabilistic estimations. Finally, in the most general case neither the Robot's pose and map is available, this is where slam cames in. In slam, the Robot will use the odometry and the sensor data to build a map of its environment while simultaneously localize itself relative to this map. The slam problem is quite challenging, with noise in the Robot pose and measurement, the Robot's pose will be uncertain and the construction of the map will be uncertaion as well, they are interrelated. This project will use an implementation of slam called real time appearance based mapping or RTABmap. This implementation is based on Graph Slam. GraphSlam is a slam algorithm that solves the full slam problem, this means that the algoritm recovers the entire path and map, instead of just the most recent pose and map.
+{T}{here} are some applications where a Robot is provided with a map of its environment and it is able to estimate its pose based on this map, the odometry data and some sensor data like a Lidar or RGB-D camera. Furthermore, in some case the map is unknown, either because the area is unexplored or because the surrounding change often and the map may not be updated. In that case the Robot must construct a map, the Robot's pose is known and the Robot is equipped with sensor data to measure its environment. There are several difficulties when building a map: high dimensionality of the space, size, noise, perceptual ambiguity , Robot moving in cycles. The  high dimensionality problem can be overcome by using an occupancy grid map where the space is represented by a fine-grained grid over the continuous space in the environment. The noise or incertains is manages by using probabilistic estimations. Finally, in the most general case neither the Robot's pose and map is available, this is where slam cames in. In slam, the Robot will use the odometry and the sensor data to build a map of its environment while simultaneously localize itself relative to this map. The slam problem is quite challenging, with noise in the Robot pose and measurement, the Robot's pose will be uncertain and the construction of the map will be uncertaion as well, they are interrelated. The slam algorithm can be classified into full slam or local slam; in full slam the full trajectory of the robot is used to inference the location and to build the map, in local slam just the last sensor read data is used. Finally, the loop-clousure detection is used to improve the accuracy of the map by detecting and identifying features in the scene. This project will use an implementation of slam called real time appearance based mapping or RTABmap. This implementation is based on Graph Slam. GraphSlam is a slam algorithm that solves the full slam problem, this means that the algoritm recovers the entire path and map, instead of just the most recent pose and map. \cite{udacity} \cite{probabilistic}
 \section{Background / Formulation}
 The SLAM problem is considered the most fundamental problem in robotics. It is considered as a prerequisite for truly autonomous robot navigation. In the following section two different algorithms are explained. For the project the Graph SLAM algorithm was selected since it has both a better performance and accuracy.
 \subsection{Grid-based FastSLAM}
@@ -104,13 +104,31 @@ A module named slam\_project was created with the follwing structure:
 .2 urdf.
 .2 worlds.
 }
-Three different launchs files were created:
-roslaunch slam\_project world.launch
-roslaunch slam\_project teleop.launch
-roslaunch slam\_project mapping.launch
-roslaunch slam\_project rviz.launch
+
+Three different launches files were created:
+\begin{enumerate}
+\item roslaunch slam\_project world\.launch: creates the world and the robot inside the world in gazebo.
+\item roslaunch slam\_project teleop\.launch: creates a node to tele operate the robot. 
+\item roslaunch slam\_project mapping\.launch: creates the rtabmap node.
+\item roslaunch slam\_project rviz\.launch: launch rviz.
+\end{enumerate}
+
 \section{Results}
 
+The following images show both the occupancy grid and 3D map for the Udacity world and the own world created from scratch. After moving around the scene the robot, the map was successfully built. The same place was visited several times in order to test the capacity of the algorithm to detect closures to improve the accuracy of the map. It was possible to successfully construct the map. 
+
+\begin{figure}[h]
+\centering
+\begin{subfigure}[b]{0.2\textwidth}
+\includegraphics[scale=0.3]{udacity-occupancy-grid}
+\caption{Occupancy Grid Map}
+\end{subfigure}
+\begin{subfigure}[b]{0.2\textwidth}
+\includegraphics[scale=0.3]{udacity-3d-map}
+\caption{3D octomap}
+\end{subfigure}
+\caption{Udacity world}
+\end{figure}
 
 \begin{figure}[h]
 \centering
@@ -125,15 +143,17 @@ roslaunch slam\_project rviz.launch
 \caption{Own world}
 \end{figure}
 
-
-
-
-
-
-
+Analysing the database generated by rtabmap 10 closures were detected.
 
 \section{Discussion}
+The project setup was done using the debugging tools in ROS. In order to check the correct definition of links and joints the coordinates frames was checked using the tf library tools. After few corrections, the correct configuration was finally archive. At the beginning the map 3D map was quite strange; the camera orientation was adjusted to solve this problem. Once the coordinates frames and camera orientation was defined the robot was move around the scene to generate the 2D and 3D map. It was detected that the quality of the map was quite related to the trajectory of the robot. If the robot was moving in small loops turning around a lot the quality of the 3D map was worse than if the robot was doing large loops around the environment.
+
+A way to improve the quality of the map is to increase the detection to increase the number of loop closures found when returning to a previous area but because the processing power needed and dead lines to finish the project this option was not investigated in deep. The final solution was to change the way in which the robot was moving in the scene, the robot follows long loops and passing the locations in the scene several time. This was enough in order to achieve the desire quality.
+
+At the beginning a map with empty room was created and the quality was poor. The conclusion was that due the scene was quite similar in different robot positions, the robot was not detecting closures and when passing the same place was identifying the position as new. After adding few objects, the quality of the map improve.  
 \section{Conclusion / Future work}
+
+The ability to build a map and to detect the position of the robot relative to this map can be used in several applications. A robot with these capabilities will be able to navigate in environment unexplored or where changes are frequents: people or obstacles changing its positions. I am planning to use this functionality to build a tour-guide robot for the Gran Telescopio Canarias in which a robot will be moving around the environment autonomously and reacting to change in the environment.
 
 \begin{thebibliography}{9}
 \bibliographystyle{ieeetr}
@@ -142,14 +162,11 @@ roslaunch slam\_project rviz.launch
 https://eu.udacity.com
 \textit{Robotics Software Engineer Nanodegree program}. 
 
-\bibitem{deeplearning} 
-Adit Deshpande
-\textit{The 9 Deep Learning Papers You Need To Know About}. 
-
-\bibitem{analysisdnn} 
-Alfredo Canziani, Eugenio Culurciello,Adam Paszke  
-\textit{An analysis of deep neural network models for practical applications}. 
+\bibitem{probabilistic} 
+Sebastian Thrun, Wolfram Burgard, Dieter Fox
+\textit{Probabilistic Robotics}. 
 \end{thebibliography}
+
 \end{document}
 	
 	
