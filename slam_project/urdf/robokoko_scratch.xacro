@@ -4,32 +4,10 @@
 
   <xacro:include filename="$(find slam_project)/urdf/robokoko_scratch.gazebo" />
 
-	<gazebo reference="left_wheel_link">
-		<material>Gazebo/Yellow</material>
-	</gazebo>
-
-	<gazebo reference="right_wheel_link">
-		<material>Gazebo/Yellow</material>
-	</gazebo>
-
-	<gazebo reference="chassis_link">
-		<material>Gazebo/Black</material>
-	</gazebo>
-
-	<gazebo reference="body_link">
-		<material>Gazebo/Orange</material>
-	</gazebo>
-
-	<gazebo reference="camera_link">
-		<material>Gazebo/Orange</material>
-	</gazebo>
-
-	<gazebo reference="front_caster_link">
-		<material>Gazebo/Orange</material>
-	</gazebo>
-
+	<!-- Link robot footprint --> 
   <link name="robot_footprint"/>
 
+	<!-- Link chassis --> 
   <link name="chassis_link">
 
 		<visual>
@@ -53,6 +31,7 @@
 
   </link>
 
+	<!-- Link Front Caster --> 
 	<link name='front_caster_link'>
 
 		<visual>
@@ -70,14 +49,41 @@
 		<inertial>
 			<mass value=".250"/>
 			<inertia
-			  ixx="0." ixy="0" ixz="0"
-			  iyy="0." iyz="0"
-			  izz="0."
+			  ixx="0.000703125" ixy="0" ixz="0"
+			  iyy="0.000703125" iyz="0"
+			  izz="0.000703125"
 			/>
 		</inertial>
 
 	</link>
 
+	<!-- Link Back Caster --> 
+	<link name='back_caster_link'>
+
+		<visual>
+		  <geometry>
+				<sphere radius="0.075"/>
+		  </geometry>
+		</visual>
+
+		<collision name='back_caster_collision'>
+		  <geometry>
+				<sphere radius="0.075"/>
+		  </geometry>
+		</collision>
+
+		<inertial>
+			<mass value=".250"/>
+			<inertia
+			  ixx="0.000703125" ixy="0" ixz="0"
+			  iyy="0.000703125" iyz="0"
+			  izz="0.000703125"
+			/>
+		</inertial>
+
+	</link>
+
+	<!-- Link Left Wheel --> 
 	<link name='left_wheel_link'>
 
 		<visual>
@@ -106,6 +112,7 @@
 
 	</link>
 
+	<!-- Link Right Wheel --> 
 	<link name='right_wheel_link'>
 
 		<visual>
@@ -133,6 +140,7 @@
 
 	</link>
 
+	<!-- Link Body --> 
 	<link name='body_link'>
 
 		<visual>
@@ -143,7 +151,7 @@
 
 		<collision name='body_collision'>
 		  <geometry>
-				<cylinder length="0.8" radius="0.1"/>
+				<cylinder length="0.65" radius="0.1"/>
 		  </geometry>
 		</collision>
 
@@ -158,6 +166,7 @@
 
 	</link>
 
+	<!-- Link Camera --> 
 	<link name='camera_link'>
 
 		<visual>
@@ -183,8 +192,12 @@
 
 	</link>
 
+	<!-- Link RGB-D  --> 
 	<link name='camera_rgbd_frame'></link>
 
+	<link name='imu_link'></link>
+
+	<!-- Link Lidar  --> 
 	<link name='hokuyo'>
 
 		<visual>
@@ -212,55 +225,79 @@
 
 	</link>
 
+	<!-- Joint Robot footprint  --> 
   <joint name="robot_footprint_joint" type="fixed">
 	  <origin xyz="0 0 0.15" rpy="0 0 0" />
     <parent link="robot_footprint"/>
     <child link="chassis_link"/>
   </joint>
 
+	<!-- Joint left wheel  --> 
 	<joint name="left_wheel_joint" type="continuous" >
-		<origin xyz="-0.1 0.35 0" rpy="0 0 0"/>
+		<origin xyz="0 0.35 0" rpy="0 0 0"/>
 		<axis xyz="0 1 0" />
 		<parent link="chassis_link"/>
 		<child link="left_wheel_link"/>
 	</joint>
 
+	<!-- Joint right wheel  --> 
 	<joint name="right_wheel_joint" type="continuous" >
-    <origin xyz="-0.1 -0.35 0" rpy="0 0 0"/>
+    <origin xyz="0 -0.35 0" rpy="0 0 0"/>
 		<axis xyz="0 1 0" />	
 		<parent link="chassis_link"/>
 		<child link="right_wheel_link"/>
 	</joint>
 
+	<!-- Joint front caster  --> 
 	<joint name="front_caster_joint" type="fixed" >
-		<origin xyz="0.15 0 -0.075" rpy="0 0 0"/>
+		<origin xyz="0.22 0 -0.075" rpy="0 0 0"/>
 		<parent link="chassis_link"/>
 		<child link="front_caster_link"/>
 	</joint>
 
+	<!-- Joint back caster  --> 
+	<joint name="back_caster_joint" type="fixed" >
+		<origin xyz="-0.22 0 -0.075" rpy="0 0 0"/>
+		<parent link="chassis_link"/>
+		<child link="back_caster_link"/>
+	</joint>
+
+	<!-- Joint body  --> 
 	<joint name="body_joint" type="fixed" >
 		<origin xyz="0 0 0.45" rpy="0 0 0"/>
 		<parent link="chassis_link"/>
 		<child link="body_link"/>
 	</joint>
 
+	<!-- Joint lidar  --> 
 	<joint name="lidar_joint" type="fixed" >
     <origin xyz="0 0 0.435" rpy="0 0 0"/>
 		<parent link="body_link"/>
 		<child link="hokuyo"/>
 	</joint>
 
+	<!-- Joint camera  --> 
 	<joint name="camera_joint" type="fixed" >
     <origin xyz="0.11 0 0.2" rpy="0 0 0"/>
 		<parent link="body_link"/>
 		<child link="camera_link"/>
 	</joint>
 
+	<!-- Joint camera rgbd  --> 
 	<joint name="camera_rgbd_joint" type="fixed" >
 		<parent link="camera_link"/>
 		<child link="camera_rgbd_frame"/>
 		<origin xyz="0 0 0" rpy="-1.57 0 -1.57"/>
 	</joint>
+
+	<!-- Joint Imu  --> 
+	<joint name="imu_joint" type="fixed" >
+		<parent link="body_link"/>
+		<child link="imu_link"/>
+		<origin xyz="0 0 0" rpy="0 0 0"/>
+	</joint>
+
+
 
 </robot>
 

@@ -1,6 +1,48 @@
 <?xml version="1.0"?>
 <robot>
 
+	<!-- Visual material, colors. -->
+	<gazebo reference="left_wheel_link">
+		<material>Gazebo/Yellow</material>
+	</gazebo>
+
+	<gazebo reference="right_wheel_link">
+		<material>Gazebo/Yellow</material>
+	</gazebo>
+
+	<gazebo reference="chassis_link">
+		<material>Gazebo/Black</material>
+	</gazebo>
+
+	<gazebo reference="body_link">
+		<material>Gazebo/Orange</material>
+	</gazebo>
+
+	<gazebo reference="camera_link">
+		<material>Gazebo/Orange</material>
+	</gazebo>
+
+	<gazebo reference="front_caster_link">
+		<material>Gazebo/Orange</material>
+	</gazebo>
+
+	<gazebo reference="back_caster_link">
+		<material>Gazebo/Orange</material>
+	</gazebo>
+
+	<!--Friction coefients -->
+  <gazebo reference="front_caster_link">
+	  <mu1>0.0</mu1>
+	  <mu2>0.0</mu2>
+  </gazebo>
+
+  <gazebo reference="back_caster_link">
+	  <mu1>0.0</mu1>
+	  <mu2>0.0</mu2>
+  </gazebo>
+
+
+	<!-- Differential drive controller -->
   <gazebo>
     <plugin name="differential_drive_controller" filename="libgazebo_ros_diff_drive.so">
       <legacyMode>false</legacyMode>
@@ -18,6 +60,7 @@
     </plugin>
   </gazebo>
 
+	<!--Friction coefients -->
   <gazebo reference="front_caster_link">
 	  <mu1>0.0</mu1>
 	  <mu2>0.0</mu2>
@@ -70,7 +113,6 @@
     </sensor>
   </gazebo>
 
-
   <!-- Lidar -->
   <gazebo reference="hokuyo">
     <sensor type="ray" name="head_hokuyo_sensor">
@@ -108,5 +150,25 @@
     </sensor>
   </gazebo>
 
+	
+	<gazebo reference="imu_link">
+    <gravity>true</gravity>
+    <sensor name="imu_sensor" type="imu">
+      <always_on>true</always_on>
+      <update_rate>100</update_rate>
+      <visualize>true</visualize>
+      <topic>__default_topic__</topic>
+      <plugin filename="libgazebo_ros_imu_sensor.so" name="imu_plugin">
+        <topicName>imu</topicName>
+        <bodyName>imu_link</bodyName>
+        <updateRateHZ>10.0</updateRateHZ>
+        <gaussianNoise>0.0</gaussianNoise>
+        <xyzOffset>0 0 0</xyzOffset>
+        <rpyOffset>0 0 0</rpyOffset>
+        <frameName>imu_link</frameName>
+      </plugin>
+      <pose>0 0 0 0 0 0</pose>
+    </sensor>
+  </gazebo>
 
 </robot>
