@@ -30,18 +30,6 @@
 		<material>Gazebo/Orange</material>
 	</gazebo>
 
-	<!--Friction coefients -->
-  <gazebo reference="front_caster_link">
-	  <mu1>0.0</mu1>
-	  <mu2>0.0</mu2>
-  </gazebo>
-
-  <gazebo reference="back_caster_link">
-	  <mu1>0.0</mu1>
-	  <mu2>0.0</mu2>
-  </gazebo>
-
-
 	<!-- Differential drive controller -->
   <gazebo>
     <plugin name="differential_drive_controller" filename="libgazebo_ros_diff_drive.so">
@@ -50,8 +38,8 @@
       <updateRate>10</updateRate>
       <leftJoint>left_wheel_joint</leftJoint>
       <rightJoint>right_wheel_joint</rightJoint>
-      <wheelSeparation>0.7</wheelSeparation>
-      <wheelDiameter>0.3</wheelDiameter>
+      <wheelSeparation>0.35</wheelSeparation>
+      <wheelDiameter>0.15</wheelDiameter>
       <torque>10</torque>
       <commandTopic>cmd_vel</commandTopic>
       <odometryTopic>odom</odometryTopic>
@@ -62,6 +50,11 @@
 
 	<!--Friction coefients -->
   <gazebo reference="front_caster_link">
+	  <mu1>0.0</mu1>
+	  <mu2>0.0</mu2>
+  </gazebo>
+
+  <gazebo reference="back_caster_link">
 	  <mu1>0.0</mu1>
 	  <mu2>0.0</mu2>
   </gazebo>
@@ -150,7 +143,7 @@
     </sensor>
   </gazebo>
 
-	
+	<!-- IMU -->	
 	<gazebo reference="imu_link">
     <gravity>true</gravity>
     <sensor name="imu_sensor" type="imu">
